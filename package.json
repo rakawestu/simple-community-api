@@ -1,0 +1,28 @@
+{
+  "name": "simple-community-api",
+  "version": "0.1.0",
+  "description": "Simple community member management API",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakawestu/simple-community-api.git"
+  },
+  "keywords": [
+    "community",
+    "member"
+  ],
+  "author": "rakawestu (westumogandhi@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rakawestu/simple-community-api/issues"
+  },
+  "homepage": "https://github.com/rakawestu/simple-community-api#readme"
+}
