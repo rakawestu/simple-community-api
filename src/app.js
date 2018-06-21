@@ -17,7 +17,8 @@ import {
 
 import { 
   handleLiveness,
-  handleReadiness
+  handleReadiness,
+  handleMembers
 } from './handlers/v1'
 
 const main = () => {
@@ -65,7 +66,8 @@ const runHttpServer = () => {
 const createHttpServer = () => {
   const routes = {
     '/liveness': handleLiveness,
-    '/readiness': handleReadiness
+    '/readiness': handleReadiness,
+    '/members': handleMembers
   }
 
   const handleNotFound = (request) => {
