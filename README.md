@@ -193,7 +193,7 @@ Example Response(s):
 }
 ```
 
-### Delete Member
+### DELETE Member (DELETE /members/<member_id>)
 
 Delete specific member data
 
@@ -221,5 +221,5 @@ Example Response(s):
 This will run API and its dependencies on one command.
 
 ```
-docker-compose up -d
+docker-compose -f docker/docker-compose.yml up -d
 ```
