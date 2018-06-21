@@ -4,6 +4,8 @@ import Schema from 'validate'
 import uuidv4 from 'uuid/v4'
 import Moment from 'moment'
 
+import logger from '../../infrastructure/logger'
+
 import connectPostgres from '../../infrastructure/postgres/connect_postgres'
 import createHttpError from '../../utils/create_http_error'
 import validateMemberType from '../../utils/validate_member_type'
@@ -45,7 +47,7 @@ const handleCreateMember = (request, response, requestBody) => {
         .switchMap((client) => {
           const parsedBirthDate = convertDateToISO8601(parsedRequestBody.birth_date)
           const parsedJoinDate = parsedRequestBody.join_date? 
-            convertDateToISO8601() : 
+            convertDateToISO8601(parsedRequestBody.join_date) : 
             Moment().toISOString()
 
           const query = {
@@ -138,31 +140,23 @@ const handleUpdateMember = (request, response, requestBody) => {
 
 const handleGetMembers = (request) => {
   return Rx.Observable
-    .defer(() => Rx.Observable.of(url.parse(request.url)))
-    .map((parsedUrl) => parsedUrl.pathname.split('/').filter((path) => path !== ''))
-    .switchMap((paths) => {
+    .defer(() => Rx.Observable.of(url.parse(request.url, true)))
+    .switchMap((parsedUrl) => {
+      const paths = parsedUrl.pathname.split('/').filter((path) => path !== '')
       if (paths.length > 2) return Rx.Observable.throw(createHttpError(400, 'Wrong path format'))
 
       if (paths[1]) {
         return handleGetMemberById(paths[1])
       }
 
+      const query = parsedUrl.query
+
+      if (query.city || query.member_type || query.join_date) {
+        return handleFilterMembers(query)
+      }
+
       return handleGetMultipleMembers()
     })
-}
-
-const handleGetMultipleMembers = () => {
-  const query = 'SELECT * FROM members WHERE deleted_at IS NULL'
-  return connectPostgres()
-    .switchMap((client) => {
-      return Rx.Observable.fromPromise(client.query(query))
-    })
-    .map((result) => ({
-      statusCode: 200,
-      data: {
-        members: result.rows
-      }
-    }))
 }
 
 const handleGetMemberById = (memberId) => {
@@ -187,6 +181,57 @@ const handleGetMemberById = (memberId) => {
         }
       })
     })
+}
+
+const handleFilterMembers = (queryString) => {
+  var queryText = 'SELECT * FROM members WHERE deleted_at IS NULL '
+
+  if (queryString.city) {
+    queryText += 'AND LOWER(city) = LOWER(\'' + queryString.city + '\') '
+  }
+
+  if (queryString.member_type) {
+    if (!validateMemberType(queryString.member_type)) {
+      return Rx.Observable.throw(createHttpError(400, 'Invalid member type'))
+    }
+
+    queryText += 'AND member_type = \'' + queryString.member_type + '\' '
+  }
+
+  if (queryString.join_date) {
+    if (!validateDate(queryString.join_date)) {
+      return Rx.Observable.throw(createHttpError(400, 'Invalid birth date format'))
+    }
+
+    queryText += 'AND join_date::date = \'' + queryString.join_date + '\' '
+  }
+
+  logger.warn(queryText)
+
+  return connectPostgres()
+    .switchMap((client) => {
+      return Rx.Observable.fromPromise(client.query(queryText))
+    })
+    .map((result) => ({
+      statusCode: 200,
+      data: {
+        members: result.rows
+      }
+    }))
+} 
+
+const handleGetMultipleMembers = () => {
+  const query = 'SELECT * FROM members WHERE deleted_at IS NULL'
+  return connectPostgres()
+    .switchMap((client) => {
+      return Rx.Observable.fromPromise(client.query(query))
+    })
+    .map((result) => ({
+      statusCode: 200,
+      data: {
+        members: result.rows
+      }
+    }))
 }
 
 const handleDeleteMemberById = (request) => {
