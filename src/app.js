@@ -15,7 +15,10 @@ import {
   sendJsendResponse
 } from './utils'
 
-import { handleLiveness } from './handlers/v1'
+import { 
+  handleLiveness,
+  handleReadiness
+} from './handlers/v1'
 
 const main = () => {
   const args = process.argv
@@ -61,7 +64,8 @@ const runHttpServer = () => {
 
 const createHttpServer = () => {
   const routes = {
-    '/liveness': handleLiveness
+    '/liveness': handleLiveness,
+    '/readiness': handleReadiness
   }
 
   const handleNotFound = (request) => {
