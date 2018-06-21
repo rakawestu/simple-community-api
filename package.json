@@ -1,0 +1,54 @@
+{
+  "name": "simple-community-api",
+  "version": "0.1.0",
+  "description": "Simple community member management API",
+  "main": "app.js",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon src/app.js --exec babel-node",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate-dev": "babel-node src/app.js migrate",
+    "build-dist": "./node_modules/.bin/babel src -d dist",
+    "serve-dist": "node dist/app.js",
+    "migrate-dist": "node dist/app.js migrate",
+    "rm-dist": "rm -fr dist",
+    "serve": "npm run build-dist && npm run serve-dist",
+    "migrate": "npm run build-dist && npm run migrate-dist",
+    "lint": "esw . --ignore-pattern .eslintignore --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakawestu/simple-community-api.git"
+  },
+  "keywords": [
+    "community",
+    "member"
+  ],
+  "author": "rakawestu (westumogandhi@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rakawestu/simple-community-api/issues"
+  },
+  "homepage": "https://github.com/rakawestu/simple-community-api#readme",
+  "dependencies": {
+    "body": "^5.1.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-import-resolver-webpack": "^0.10.0",
+    "eslint-plugin-babel": "^5.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-watch": "^3.1.5",
+    "good-env": "^3.0.0",
+    "moment": "^2.22.2",
+    "pg": "^7.4.3",
+    "postgrator": "^3.6.0",
+    "rxjs": "^5.5.10",
+    "uuid": "^3.2.1",
+    "validate": "^4.4.1",
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.17.5"
+  }
+}

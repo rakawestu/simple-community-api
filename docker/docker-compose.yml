@@ -1,0 +1,41 @@
+version: "2"
+
+services:
+  community-api:
+    restart: always
+    image: rakawm/simple-community-api
+    container_name: community-api
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVER_PORT=8081
+      - PG_PORT=5432
+      - PG_USER=community-user
+      - PG_PASSWORD=community-password
+      - PG_HOST=community-postgres
+      - PG_DATABASE=community-db
+    links:
+      - "community-postgres:community-postgres"
+  community-api-migration:
+    image: rakawm/simple-community-api
+    container_name: community-api-migration
+    environment:
+      - SERVER_PORT=8081
+      - PG_PORT=5432
+      - PG_USER=community-user
+      - PG_PASSWORD=community-password
+      - PG_HOST=community-postgres
+      - PG_DATABASE=community-db
+    links:
+      - "community-postgres:community-postgres"
+    command: migrate
+  community-postgres:
+    restart: always
+    image: postgres:10-alpine
+    container_name: community-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=community-password
+      - POSTGRES_USER=community-user
+      - POSTGRES_DB=community-db
