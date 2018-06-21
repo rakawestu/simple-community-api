@@ -8,7 +8,7 @@ const config = {
   pgPort: env.getNumber('PG_PORT', 5432),
   pgDatabase: env.get('PG_DATABASE', 'community_db'),
   pgUser: env.get('PG_USER', 'community_user'),
-  pgPassword: env.get('PG_PASSWORD', 'community_password')
+  pgPassword: env.get('PG_PASSWORD', 'community_pwd')
 }
 
 export default config
