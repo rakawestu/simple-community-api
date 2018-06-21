@@ -13,4 +13,5 @@ COPY . ./
 
 # Default runtime configs and helpers
 EXPOSE 8080
-CMD sync; /app/docker/start.sh
+ENTRYPOINT [ "/app/docker/start.sh" ]
+CMD ["run"]
